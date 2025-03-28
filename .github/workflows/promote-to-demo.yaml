@@ -31,7 +31,7 @@ jobs:
  
   install-on-demo:
     needs: [prep-image-name]
-    uses: opencost/opencost-infra/.github/workflows/promote-to-oc-demo.yaml@atm/cd-to-demo
+    uses: opencost/opencost-infra/.github/workflows/promote-to-oc-demo.yaml@main
     secrets: inherit
     with:
       img-fqdn: ${{ needs.prep-image-name.outputs.image_tag }}
