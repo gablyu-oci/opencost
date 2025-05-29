@@ -21,6 +21,7 @@ import (
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/Azure/go-autorest/autorest/azure/auth"
 
+	"github.com/opencost/opencost/core/pkg/clustercache"
 	"github.com/opencost/opencost/core/pkg/log"
 	"github.com/opencost/opencost/core/pkg/opencost"
 	"github.com/opencost/opencost/core/pkg/util"
@@ -29,7 +30,6 @@ import (
 	"github.com/opencost/opencost/core/pkg/util/timeutil"
 	"github.com/opencost/opencost/pkg/cloud/models"
 	"github.com/opencost/opencost/pkg/cloud/utils"
-	"github.com/opencost/opencost/pkg/clustercache"
 	"github.com/opencost/opencost/pkg/env"
 )
 
@@ -1620,10 +1620,6 @@ func (az *Azure) PVPricing(pvk models.PVKey) (*models.PV, error) {
 		return &models.PV{}, nil
 	}
 	return pricing.PV, nil
-}
-
-func (az *Azure) GetLocalStorageQuery(window, offset time.Duration, rate bool, used bool) string {
-	return ""
 }
 
 func (az *Azure) ServiceAccountStatus() *models.ServiceAccountStatus {

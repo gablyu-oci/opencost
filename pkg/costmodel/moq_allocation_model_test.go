@@ -22,7 +22,7 @@ var _ AllocationModel = &AllocationModelMock{}
 //			ComputeAllocationFunc: func(start time.Time, end time.Time, resolution time.Duration) (*opencost.AllocationSet, error) {
 //				panic("mock out the ComputeAllocation method")
 //			},
-//			DateRangeFunc: func() (time.Time, time.Time, error) {
+//			DateRangeFunc: func(limitDays int) (time.Time, time.Time, error) {
 //				panic("mock out the DateRange method")
 //			},
 //		}
@@ -36,7 +36,7 @@ type AllocationModelMock struct {
 	ComputeAllocationFunc func(start time.Time, end time.Time, resolution time.Duration) (*opencost.AllocationSet, error)
 
 	// DateRangeFunc mocks the DateRange method.
-	DateRangeFunc func() (time.Time, time.Time, error)
+	DateRangeFunc func(limitDays int) (time.Time, time.Time, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
@@ -51,6 +51,8 @@ type AllocationModelMock struct {
 		}
 		// DateRange holds details about calls to the DateRange method.
 		DateRange []struct {
+			// LimitDays is the limitDays argument value.
+			LimitDays int
 		}
 	}
 	lockComputeAllocation sync.RWMutex
@@ -98,16 +100,19 @@ func (mock *AllocationModelMock) ComputeAllocationCalls() []struct {
 }
 
 // DateRange calls DateRangeFunc.
-func (mock *AllocationModelMock) DateRange() (time.Time, time.Time, error) {
+func (mock *AllocationModelMock) DateRange(limitDays int) (time.Time, time.Time, error) {
 	if mock.DateRangeFunc == nil {
 		panic("AllocationModelMock.DateRangeFunc: method is nil but AllocationModel.DateRange was just called")
 	}
 	callInfo := struct {
-	}{}
+		LimitDays int
+	}{
+		LimitDays: limitDays,
+	}
 	mock.lockDateRange.Lock()
 	mock.calls.DateRange = append(mock.calls.DateRange, callInfo)
 	mock.lockDateRange.Unlock()
-	return mock.DateRangeFunc()
+	return mock.DateRangeFunc(limitDays)
 }
 
 // DateRangeCalls gets all the calls that were made to DateRange.
@@ -115,8 +120,10 @@ func (mock *AllocationModelMock) DateRange() (time.Time, time.Time, error) {
 //
 //	len(mockedAllocationModel.DateRangeCalls())
 func (mock *AllocationModelMock) DateRangeCalls() []struct {
+	LimitDays int
 } {
 	var calls []struct {
+		LimitDays int
 	}
 	mock.lockDateRange.RLock()
 	calls = mock.calls.DateRange
