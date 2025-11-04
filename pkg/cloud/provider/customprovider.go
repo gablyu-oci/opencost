@@ -74,6 +74,8 @@ type customProviderKey struct {
 	GPULabel       string
 	GPULabelValue  string
 	Labels         map[string]string
+	gpuCount       int
+	gpuType        string
 }
 
 func (*CustomProvider) ClusterManagementPricing() (string, float64, error) {
@@ -180,7 +182,7 @@ func (cp *CustomProvider) NodePricing(key models.Key) (*models.Node, models.Pric
 	}
 	if key.GPUType() != "" {
 		k += ",gpu"    // TODO: support multiple custom gpu types.
-		gpuCount = "1" // TODO: support more than one gpu.
+		gpuCount = strconv.Itoa(key.GPUCount()) // Use actual GPU count from node capacity
 	}
 
 	var cpuCost, ramCost, gpuCost string
@@ -236,12 +238,29 @@ func (cp *CustomProvider) DownloadPricingData() error {
 }
 
 func (cp *CustomProvider) GetKey(labels map[string]string, n *clustercache.Node) models.Key {
+	var gpuCount int
+	var gpuType string
+	
+	// Check for NVIDIA GPUs
+	if gpuc, ok := n.Status.Capacity["nvidia.com/gpu"]; ok {
+		gpuCount = int(gpuc.Value())
+		gpuType = "nvidia.com/gpu"
+	}
+	
+	// Check for AMD GPUs (Oracle BM.GPU.MI300X.8 and similar)
+	if gpuc, ok := n.Status.Capacity["amd.com/gpu"]; ok {
+		gpuCount = int(gpuc.Value())
+		gpuType = "amd.com/gpu"
+	}
+	
 	return &customProviderKey{
 		SpotLabel:      cp.SpotLabel,
 		SpotLabelValue: cp.SpotLabelValue,
 		GPULabel:       cp.GPULabel,
 		GPULabelValue:  cp.GPULabelValue,
 		Labels:         labels,
+		gpuCount:       gpuCount,
+		gpuType:        gpuType,
 	}
 }
 
@@ -365,10 +384,15 @@ func (key *customPVKey) Features() string {
 }
 
 func (k *customProviderKey) GPUCount() int {
-	return 0
+	return k.gpuCount
 }
 
 func (cpk *customProviderKey) GPUType() string {
+	// First check if GPU was detected from node capacity
+	if cpk.gpuType != "" {
+		return cpk.gpuType
+	}
+	// Fallback to label-based detection
 	if t, ok := cpk.Labels[cpk.GPULabel]; ok {
 		return t
 	}
