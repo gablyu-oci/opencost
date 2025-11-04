@@ -88,17 +88,23 @@ func (rcs *RateCardStore) ForManagedCluster(clusterType string) float64 {
 }
 
 func (rcs *RateCardStore) ForEgressRegion(region string, defaultPricing DefaultPricing) (*models.Network, error) {
-	pn := egressRegionPartNumber(region)
 	var egressCost float64
-	if rc, ok := rcs.prices[pn]; ok {
-		egressCost = rc.UnitPrice
-	} else if defaultPricing.Egress != "" {
+	
+	// If custom egress pricing is set, prioritize it over Oracle API pricing
+	if defaultPricing.Egress != "" {
 		cost, err := strconv.ParseFloat(defaultPricing.Egress, 64)
 		if err != nil {
 			return nil, err
 		}
 		egressCost = cost
+	} else {
+		// Otherwise, use Oracle API pricing
+		pn := egressRegionPartNumber(region)
+		if rc, ok := rcs.prices[pn]; ok {
+			egressCost = rc.UnitPrice
+		}
 	}
+	
 	return &models.Network{
 		ZoneNetworkEgressCost:     0,
 		RegionNetworkEgressCost:   egressCost,
@@ -108,6 +114,14 @@ func (rcs *RateCardStore) ForEgressRegion(region string, defaultPricing DefaultP
 
 // ForPVK retrieves a Gb/Hour cost for a given PVKey.
 func (rcs *RateCardStore) ForPVK(pvk models.PVKey, defaultPricing DefaultPricing) (*models.PV, error) {
+	// If custom storage pricing is set, prioritize it over Oracle API pricing
+	if defaultPricing.Storage != "" {
+		return &models.PV{
+			Cost: defaultPricing.Storage,
+		}, nil
+	}
+	
+	// Otherwise, use Oracle API pricing
 	features := pvk.Features()
 	rc, ok := rcs.prices[features]
 	if !ok {
@@ -126,52 +140,78 @@ func (rcs *RateCardStore) ForKey(key models.Key, defaultPricing DefaultPricing) 
 	features := strings.Split(key.Features(), ",")
 	product := instanceProducts.get(features[0])
 	var node *models.Node
-	// Use the default pricing if the instance product is unknown
-	if product.isEmpty() {
-		totalCost, err := defaultPricing.TotalInstanceCost()
+	
+	// Variables to hold final pricing - will be mixed from custom and API sources
+	var ocpuPrice, memoryPrice, gpuPrice, diskPrice float64
+	var err error
+	
+	// Determine OCPU/CPU pricing: Custom value takes priority
+	if defaultPricing.OCPU != "" {
+		// Use custom CPU pricing from ConfigMap
+		ocpuPrice, err = strconv.ParseFloat(defaultPricing.OCPU, 64)
 		if err != nil {
-			return nil, models.PricingMetadata{}, fmt.Errorf("failed to parse default Oracle pricing: %w", err)
+			return nil, models.PricingMetadata{}, fmt.Errorf("failed to parse custom OCPU price: %w", err)
 		}
-		vcpuCost := defaultPricing.OCPU
-		if !isARMArch(features) {
-			// Non-ARM architectures have 2 VCPU per OCPU
-			vcpuFloat, err := strconv.ParseFloat(vcpuCost, 64)
-			if err != nil {
-				return nil, models.PricingMetadata{}, err
-			}
-			vcpuFloat /= 2
-			vcpuCost = fmt.Sprintf("%f", vcpuFloat)
-		}
-		node = &models.Node{
-			Cost:     fmt.Sprintf("%f", totalCost),
-			VCPUCost: vcpuCost,
-			RAM:      defaultPricing.Memory,
-			GPU:      defaultPricing.GPU,
-		}
-	} else {
-		ocpuPrice := rcs.prices[product.OCPU].UnitPrice
 		if !isARMArch(features) {
 			// Non-ARM architectures have 2 VCPU per OCPU
 			ocpuPrice /= 2
 		}
-		memoryPrice := rcs.prices[product.Memory].UnitPrice
-		gpuPrice := rcs.prices[product.GPU].UnitPrice
-		diskPrice := rcs.prices[product.Disk].UnitPrice
-		// convert disk price from Tb/hour to Gb/hour
-		diskPrice /= 1000
-		totalPrice := diskPrice + ocpuPrice + memoryPrice + gpuPrice
-		// Add virtual node pricing if it is being used.
-		if len(features) > 1 && features[1] == "true" {
-			totalPrice += rcs.prices[virualNodePartNumber].UnitPrice
-		}
-		node = &models.Node{
-			Cost:        fmt.Sprintf("%f", totalPrice),
-			StorageCost: fmt.Sprintf("%f", diskPrice),
-			VCPUCost:    fmt.Sprintf("%f", ocpuPrice),
-			RAMCost:     fmt.Sprintf("%f", memoryPrice),
-			GPUCost:     fmt.Sprintf("%f", gpuPrice),
+	} else if !product.isEmpty() {
+		// Use Oracle API pricing
+		ocpuPrice = rcs.prices[product.OCPU].UnitPrice
+		if !isARMArch(features) {
+			ocpuPrice /= 2
 		}
 	}
+	
+	// Determine Memory/RAM pricing: Custom value takes priority
+	if defaultPricing.Memory != "" {
+		// Use custom RAM pricing from ConfigMap
+		memoryPrice, err = strconv.ParseFloat(defaultPricing.Memory, 64)
+		if err != nil {
+			return nil, models.PricingMetadata{}, fmt.Errorf("failed to parse custom Memory price: %w", err)
+		}
+	} else if !product.isEmpty() {
+		// Use Oracle API pricing
+		memoryPrice = rcs.prices[product.Memory].UnitPrice
+	}
+	
+	// Determine GPU pricing: Custom value takes priority
+	if defaultPricing.GPU != "" {
+		// Use custom GPU pricing from ConfigMap
+		gpuPrice, err = strconv.ParseFloat(defaultPricing.GPU, 64)
+		if err != nil {
+			return nil, models.PricingMetadata{}, fmt.Errorf("failed to parse custom GPU price: %w", err)
+		}
+	} else if !product.isEmpty() {
+		// Use Oracle API pricing
+		gpuPrice = rcs.prices[product.GPU].UnitPrice
+	}
+	
+	// Disk pricing always from Oracle API (not typically customized)
+	if !product.isEmpty() {
+		diskPrice = rcs.prices[product.Disk].UnitPrice
+		// convert disk price from Tb/hour to Gb/hour
+		diskPrice /= 1000
+	}
+	
+	// Calculate total price
+	totalPrice := diskPrice + ocpuPrice + memoryPrice + gpuPrice
+	
+	// Add virtual node pricing if it is being used
+	if !product.isEmpty() && len(features) > 1 && features[1] == "true" {
+		totalPrice += rcs.prices[virualNodePartNumber].UnitPrice
+	}
+	
+	// Build the node pricing object
+	node = &models.Node{
+		Cost:        fmt.Sprintf("%f", totalPrice),
+		StorageCost: fmt.Sprintf("%f", diskPrice),
+		VCPUCost:    fmt.Sprintf("%f", ocpuPrice),
+		RAMCost:     fmt.Sprintf("%f", memoryPrice),
+		GPUCost:     fmt.Sprintf("%f", gpuPrice),
+	}
+	
 	return node, models.PricingMetadata{}, nil
 }
 
