@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	gopath "path"
-	"strconv"
 	"sync"
 
 	coreenv "github.com/opencost/opencost/core/pkg/env"
