@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+	"strings"
 	"sync"
+
+	v1 "k8s.io/api/core/v1"
 
 	"github.com/opencost/opencost/core/pkg/clustercache"
 	coreenv "github.com/opencost/opencost/core/pkg/env"
@@ -136,15 +139,23 @@ func (o *Oracle) GetKey(labels map[string]string, n *clustercache.Node) models.K
 	if gpuc, ok := n.Status.Capacity["nvidia.com/gpu"]; ok {
 		gpuCount = int(gpuc.Value())
 		gpuType = "nvidia.com/gpu"
+		log.Debugf("Oracle GetKey: Found NVIDIA GPU, count=%d, node=%s", gpuCount, n.Name)
 	}
 	
 	// Check for AMD GPUs (Oracle BM.GPU.MI300X.8 and similar)
 	if gpuc, ok := n.Status.Capacity["amd.com/gpu"]; ok {
 		gpuCount = int(gpuc.Value())
 		gpuType = "amd.com/gpu"
+		log.Debugf("Oracle GetKey: Found AMD GPU, count=%d, node=%s", gpuCount, n.Name)
 	}
 	
+	// Log if no GPU found on nodes that look like GPU nodes
 	instanceType, _ := util.GetInstanceType(labels)
+	if gpuCount == 0 && strings.Contains(instanceType, "GPU") {
+		log.Warnf("Oracle GetKey: GPU node %s (type=%s) has no GPU capacity detected. Capacity keys: %v", 
+			n.Name, instanceType, getCapacityKeys(n.Status.Capacity))
+	}
+	
 	return &oracleKey{
 		providerID:   n.SpecProviderID,
 		instanceType: instanceType,
@@ -152,6 +163,15 @@ func (o *Oracle) GetKey(labels map[string]string, n *clustercache.Node) models.K
 		gpuCount:     gpuCount,
 		gpuType:      gpuType,
 	}
+}
+
+// Helper function to get capacity keys for debugging
+func getCapacityKeys(capacity v1.ResourceList) []string {
+	keys := make([]string, 0, len(capacity))
+	for k := range capacity {
+		keys = append(keys, string(k))
+	}
+	return keys
 }
 
 func (o *Oracle) GetPVKey(pv *clustercache.PersistentVolume, parameters map[string]string, _ string) models.PVKey {
