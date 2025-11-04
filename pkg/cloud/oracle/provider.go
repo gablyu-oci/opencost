@@ -131,10 +131,19 @@ func (o *Oracle) DownloadPricingData() error {
 func (o *Oracle) GetKey(labels map[string]string, n *clustercache.Node) models.Key {
 	var gpuCount int
 	var gpuType string
+	
+	// Check for NVIDIA GPUs
 	if gpuc, ok := n.Status.Capacity["nvidia.com/gpu"]; ok {
 		gpuCount = int(gpuc.Value())
 		gpuType = "nvidia.com/gpu"
 	}
+	
+	// Check for AMD GPUs (Oracle BM.GPU.MI300X.8 and similar)
+	if gpuc, ok := n.Status.Capacity["amd.com/gpu"]; ok {
+		gpuCount = int(gpuc.Value())
+		gpuType = "amd.com/gpu"
+	}
+	
 	instanceType, _ := util.GetInstanceType(labels)
 	return &oracleKey{
 		providerID:   n.SpecProviderID,
