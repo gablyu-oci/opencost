@@ -515,6 +515,8 @@ func (cmme *CostModelMetricsEmitter) Start() bool {
 				if math.IsNaN(cpu) || math.IsInf(cpu, 0) {
 					cpu = 1 // Assume 1 CPU
 				}
+				oCPU := cpu / 2
+
 				ramCost, _ := strconv.ParseFloat(node.RAMCost, 64)
 				if math.IsNaN(ramCost) || math.IsInf(ramCost, 0) {
 					ramCost, _ = strconv.ParseFloat(cfg.RAM, 64)
@@ -540,7 +542,7 @@ func (cmme *CostModelMetricsEmitter) Start() bool {
 				nodeType := node.InstanceType
 				nodeRegion := node.Region
 
-				totalCost := cpu*cpuCost + ramCost*(ram/1024/1024/1024) + gpu*gpuCost
+				totalCost := oCPU*cpuCost + ramCost*(ram/1024/1024/1024) + gpu*gpuCost
 
 				labelKey := getKeyFromLabelStrings(nodeName, nodeName, nodeType, nodeRegion, node.ProviderID, node.ArchType, nodeUID)
 
