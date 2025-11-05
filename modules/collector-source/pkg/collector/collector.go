@@ -998,7 +998,8 @@ func NewGPUsRequestedMetricCollector() *metric.MetricCollector {
 		},
 		aggregator.AverageOverTime,
 		func(labels map[string]string) bool {
-			return labels[source.ResourceLabel] == "nvidia_com_gpu" && labels[source.ContainerLabel] != "POD" && labels[source.ContainerLabel] != "" && labels[source.NodeLabel] != ""
+			resource := labels[source.ResourceLabel]
+			return (resource == "nvidia_com_gpu" || resource == "amd_com_gpu") && labels[source.ContainerLabel] != "POD" && labels[source.ContainerLabel] != "" && labels[source.NodeLabel] != ""
 		},
 	)
 }

@@ -774,7 +774,7 @@ func (pds *PrometheusMetricsQuerier) QueryCPUUsageMax(start, end time.Time) *sou
 
 func (pds *PrometheusMetricsQuerier) QueryGPUsRequested(start, end time.Time) *source.Future[source.GPUsRequestedResult] {
 	const queryName = "QueryGPUsRequested"
-	const queryFmtGPUsRequested = `avg(avg_over_time(kube_pod_container_resource_requests{resource="nvidia_com_gpu", container!="",container!="POD", node!="", %s}[%s])) by (container, pod, namespace, node, uid, %s)`
+	const queryFmtGPUsRequested = `avg(avg_over_time(kube_pod_container_resource_requests{resource=~"nvidia_com_gpu|amd_com_gpu", container!="",container!="POD", node!="", %s}[%s])) by (container, pod, namespace, node, uid, %s)`
 
 	cfg := pds.promConfig
 
