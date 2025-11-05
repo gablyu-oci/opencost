@@ -542,7 +542,13 @@ func (cmme *CostModelMetricsEmitter) Start() bool {
 				nodeType := node.InstanceType
 				nodeRegion := node.Region
 
-				totalCost := oCPU*cpuCost + ramCost*(ram/1024/1024/1024) + gpu*gpuCost
+				// totalCost := oCPU*cpuCost + ramCost*(ram/1024/1024/1024) + gpu*gpuCost
+				var totalCost float64
+				if gpu > 0 {
+					totalCost = gpu * gpuCost
+				} else {
+					totalCost = oCPU*cpuCost + ramCost*(ram/1024/1024/1024)
+				}
 
 				labelKey := getKeyFromLabelStrings(nodeName, nodeName, nodeType, nodeRegion, node.ProviderID, node.ArchType, nodeUID)
 
