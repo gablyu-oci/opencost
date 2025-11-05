@@ -39,25 +39,25 @@ type ClusterInfoCollector struct {
 // collected by this Collector.
 func (cic ClusterInfoCollector) Describe(ch chan<- *prometheus.Desc) {
 	disabledMetrics := cic.metricsConfig.GetDisabledMetricsMap()
-	if _, disabled := disabledMetrics["kubecost_cluster_info"]; disabled {
+	if _, disabled := disabledMetrics["oci_lens_cost_kubecost_cluster_info"]; disabled {
 		return
 	}
 
-	ch <- prometheus.NewDesc("kubecost_cluster_info", "Kubecost Cluster Info", []string{}, nil)
+	ch <- prometheus.NewDesc("oci_lens_cost_kubecost_cluster_info", "Kubecost Cluster Info", []string{}, nil)
 
 }
 
 // Collect is called by the Prometheus registry when collecting metrics.
 func (cic ClusterInfoCollector) Collect(ch chan<- prometheus.Metric) {
 	disabledMetrics := cic.metricsConfig.GetDisabledMetricsMap()
-	if _, disabled := disabledMetrics["kubecost_cluster_info"]; disabled {
+	if _, disabled := disabledMetrics["oci_lens_cost_kubecost_cluster_info"]; disabled {
 		return
 	}
 
 	clusterInfo := cic.ClusterInfo.GetClusterInfo()
 	labels := promutil.MapToLabels(clusterInfo)
 
-	m := newClusterInfoMetric("kubecost_cluster_info", labels)
+	m := newClusterInfoMetric("oci_lens_cost_kubecost_cluster_info", labels)
 	ch <- m
 
 }
@@ -78,7 +78,7 @@ func newClusterInfoMetric(fqName string, labels map[string]string) ClusterInfoMe
 	return ClusterInfoMetric{
 		fqName: fqName,
 		labels: labels,
-		help:   "kubecost_cluster_info ClusterInfo",
+		help:   "oci_lens_cost_kubecost_cluster_info ClusterInfo",
 	}
 }
 
@@ -146,130 +146,130 @@ func initCostModelMetrics(clusterInfo clusters.ClusterInfoProvider, metricsConfi
 	metricsInit.Do(func() {
 
 		cpuGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "node_cpu_hourly_cost",
-			Help: "node_cpu_hourly_cost hourly cost for each cpu on this node",
+			Name: "oci_lens_cost_node_cpu_hourly_cost",
+			Help: "oci_lens_cost_node_cpu_hourly_cost hourly cost for each cpu on this node",
 		}, []string{"instance", "node", "instance_type", "region", "provider_id", "arch", "uid"})
-		if _, disabled := disabledMetrics["node_cpu_hourly_cost"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_node_cpu_hourly_cost"]; !disabled {
 			toRegisterGV = append(toRegisterGV, cpuGv)
 		}
 
 		ramGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "node_ram_hourly_cost",
-			Help: "node_ram_hourly_cost hourly cost for each gb of ram on this node",
+			Name: "oci_lens_cost_node_ram_hourly_cost",
+			Help: "oci_lens_cost_node_ram_hourly_cost hourly cost for each gb of ram on this node",
 		}, []string{"instance", "node", "instance_type", "region", "provider_id", "arch", "uid"})
-		if _, disabled := disabledMetrics["node_ram_hourly_cost"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_node_ram_hourly_cost"]; !disabled {
 			toRegisterGV = append(toRegisterGV, ramGv)
 		}
 
 		gpuGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "node_gpu_hourly_cost",
-			Help: "node_gpu_hourly_cost hourly cost for each gpu on this node",
+			Name: "oci_lens_cost_node_gpu_hourly_cost",
+			Help: "oci_lens_cost_node_gpu_hourly_cost hourly cost for each gpu on this node",
 		}, []string{"instance", "node", "instance_type", "region", "provider_id", "arch", "uid"})
-		if _, disabled := disabledMetrics["node_gpu_hourly_cost"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_node_gpu_hourly_cost"]; !disabled {
 			toRegisterGV = append(toRegisterGV, gpuGv)
 		}
 
 		gpuCountGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "node_gpu_count",
-			Help: "node_gpu_count count of gpu on this node",
+			Name: "oci_lens_cost_node_gpu_count",
+			Help: "oci_lens_cost_node_gpu_count count of gpu on this node",
 		}, []string{"instance", "node", "instance_type", "region", "provider_id", "arch", "uid"})
-		if _, disabled := disabledMetrics["node_gpu_count"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_node_gpu_count"]; !disabled {
 			toRegisterGV = append(toRegisterGV, gpuCountGv)
 		}
 
 		pvGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "pv_hourly_cost",
-			Help: "pv_hourly_cost Cost per GB per hour on a persistent disk",
+			Name: "oci_lens_cost_pv_hourly_cost",
+			Help: "oci_lens_cost_pv_hourly_cost Cost per GB per hour on a persistent disk",
 		}, []string{"volumename", "persistentvolume", "provider_id", "uid"})
-		if _, disabled := disabledMetrics["pv_hourly_cost"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_pv_hourly_cost"]; !disabled {
 			toRegisterGV = append(toRegisterGV, pvGv)
 		}
 
 		spotGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "kubecost_node_is_spot",
-			Help: "kubecost_node_is_spot Cloud provider info about node preemptibility",
+			Name: "oci_lens_cost_kubecost_node_is_spot",
+			Help: "oci_lens_cost_kubecost_node_is_spot Cloud provider info about node preemptibility",
 		}, []string{"instance", "node", "instance_type", "region", "provider_id", "arch", "uid"})
-		if _, disabled := disabledMetrics["kubecost_node_is_spot"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_kubecost_node_is_spot"]; !disabled {
 			toRegisterGV = append(toRegisterGV, spotGv)
 		}
 
 		totalGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "node_total_hourly_cost",
-			Help: "node_total_hourly_cost Total node cost per hour",
+			Name: "oci_lens_cost_node_total_hourly_cost",
+			Help: "oci_lens_cost_node_total_hourly_cost Total node cost per hour",
 		}, []string{"instance", "node", "instance_type", "region", "provider_id", "arch", "uid"})
-		if _, disabled := disabledMetrics["node_total_hourly_cost"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_node_total_hourly_cost"]; !disabled {
 			toRegisterGV = append(toRegisterGV, totalGv)
 		}
 
 		ramAllocGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "container_memory_allocation_bytes",
-			Help: "container_memory_allocation_bytes Bytes of RAM used",
+			Name: "oci_lens_cost_container_memory_allocation_bytes",
+			Help: "oci_lens_cost_container_memory_allocation_bytes Bytes of RAM used",
 		}, []string{"namespace", "pod", "container", "instance", "node", "uid"})
-		if _, disabled := disabledMetrics["container_memory_allocation_bytes"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_container_memory_allocation_bytes"]; !disabled {
 			toRegisterGV = append(toRegisterGV, ramAllocGv)
 		}
 
 		cpuAllocGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "container_cpu_allocation",
-			Help: "container_cpu_allocation Percent of a single CPU used in a minute",
+			Name: "oci_lens_cost_container_cpu_allocation",
+			Help: "oci_lens_cost_container_cpu_allocation Percent of a single CPU used in a minute",
 		}, []string{"namespace", "pod", "container", "instance", "node", "uid"})
-		if _, disabled := disabledMetrics["container_cpu_allocation"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_container_cpu_allocation"]; !disabled {
 			toRegisterGV = append(toRegisterGV, cpuAllocGv)
 		}
 
 		gpuAllocGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "container_gpu_allocation",
-			Help: "container_gpu_allocation GPU used",
+			Name: "oci_lens_cost_container_gpu_allocation",
+			Help: "oci_lens_cost_container_gpu_allocation GPU used",
 		}, []string{"namespace", "pod", "container", "instance", "node", "uid"})
-		if _, disabled := disabledMetrics["container_gpu_allocation"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_container_gpu_allocation"]; !disabled {
 			toRegisterGV = append(toRegisterGV, gpuAllocGv)
 		}
 
 		pvAllocGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "pod_pvc_allocation",
-			Help: "pod_pvc_allocation Bytes used by a PVC attached to a pod",
+			Name: "oci_lens_cost_pod_pvc_allocation",
+			Help: "oci_lens_cost_pod_pvc_allocation Bytes used by a PVC attached to a pod",
 		}, []string{"namespace", "pod", "persistentvolumeclaim", "persistentvolume", "uid"})
-		if _, disabled := disabledMetrics["pod_pvc_allocation"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_pod_pvc_allocation"]; !disabled {
 			toRegisterGV = append(toRegisterGV, pvAllocGv)
 		}
 
 		networkZoneEgressCostG = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "kubecost_network_zone_egress_cost",
-			Help: "kubecost_network_zone_egress_cost Total cost per GB egress across zones",
+			Name: "oci_lens_cost_kubecost_network_zone_egress_cost",
+			Help: "oci_lens_cost_kubecost_network_zone_egress_cost Total cost per GB egress across zones",
 		})
-		if _, disabled := disabledMetrics["kubecost_network_zone_egress_cost"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_kubecost_network_zone_egress_cost"]; !disabled {
 			toRegisterGauge = append(toRegisterGauge, networkZoneEgressCostG)
 		}
 
 		networkRegionEgressCostG = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "kubecost_network_region_egress_cost",
-			Help: "kubecost_network_region_egress_cost Total cost per GB egress across regions",
+			Name: "oci_lens_cost_kubecost_network_region_egress_cost",
+			Help: "oci_lens_cost_kubecost_network_region_egress_cost Total cost per GB egress across regions",
 		})
-		if _, disabled := disabledMetrics["kubecost_network_region_egress_cost"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_kubecost_network_region_egress_cost"]; !disabled {
 			toRegisterGauge = append(toRegisterGauge, networkRegionEgressCostG)
 		}
 
 		networkInternetEgressCostG = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "kubecost_network_internet_egress_cost",
-			Help: "kubecost_network_internet_egress_cost Total cost per GB of internet egress.",
+			Name: "oci_lens_cost_kubecost_network_internet_egress_cost",
+			Help: "oci_lens_cost_kubecost_network_internet_egress_cost Total cost per GB of internet egress.",
 		})
-		if _, disabled := disabledMetrics["kubecost_network_internet_egress_cost"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_kubecost_network_internet_egress_cost"]; !disabled {
 			toRegisterGauge = append(toRegisterGauge, networkInternetEgressCostG)
 		}
 
 		clusterManagementCostGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "kubecost_cluster_management_cost",
-			Help: "kubecost_cluster_management_cost Hourly cost paid as a cluster management fee.",
+			Name: "oci_lens_cost_kubecost_cluster_management_cost",
+			Help: "oci_lens_cost_kubecost_cluster_management_cost Hourly cost paid as a cluster management fee.",
 		}, []string{"provisioner_name"})
-		if _, disabled := disabledMetrics["kubecost_cluster_management_cost"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_kubecost_cluster_management_cost"]; !disabled {
 			toRegisterGV = append(toRegisterGV, clusterManagementCostGv)
 		}
 
 		lbCostGv = prometheus.NewGaugeVec(prometheus.GaugeOpts{ // no differentiation between ELB and ALB right now
-			Name: "kubecost_load_balancer_cost",
-			Help: "kubecost_load_balancer_cost Hourly cost of load balancer",
+			Name: "oci_lens_cost_kubecost_load_balancer_cost",
+			Help: "oci_lens_cost_kubecost_load_balancer_cost Hourly cost of load balancer",
 		}, []string{"ingress_ip", "namespace", "service_name", "uid"}) // assumes one ingress IP per load balancer
-		if _, disabled := disabledMetrics["kubecost_load_balancer_cost"]; !disabled {
+		if _, disabled := disabledMetrics["oci_lens_cost_kubecost_load_balancer_cost"]; !disabled {
 			toRegisterGV = append(toRegisterGV, lbCostGv)
 		}
 
@@ -700,7 +700,7 @@ func (cmme *CostModelMetricsEmitter) Start() bool {
 
 			pvs := cmme.KubeClusterCache.GetAllPersistentVolumes()
 			for _, pv := range pvs {
-				// Omit pv_hourly_cost if the volume status is failed
+				// Omit oci_lens_cost_pv_hourly_cost if the volume status is failed
 				if pv.Status.Phase == v1.VolumeFailed {
 					continue
 				}
@@ -740,37 +740,37 @@ func (cmme *CostModelMetricsEmitter) Start() bool {
 					if ok {
 						log.Debugf("No data observed for node with labels %v, removed from totalprice", labels)
 					} else {
-						log.Warnf("Failed to remove label set %v from metric node_total_hourly_cost. Failure to remove stale metrics may result in inaccurate data.", labels)
+						log.Warnf("Failed to remove label set %v from metric oci_lens_cost_node_total_hourly_cost. Failure to remove stale metrics may result in inaccurate data.", labels)
 					}
 					ok = cmme.NodeSpotRecorder.DeleteLabelValues(labels...)
 					if ok {
 						log.Debugf("No data observed for node with labels %v, removed from spot records", labels)
 					} else {
-						log.Warnf("Failed to remove label set %v from metric kubecost_node_is_spot. Failure to remove stale metrics may result in inaccurate data.", labels)
+						log.Warnf("Failed to remove label set %v from metric oci_lens_cost_kubecost_node_is_spot. Failure to remove stale metrics may result in inaccurate data.", labels)
 					}
 					ok = cmme.CPUPriceRecorder.DeleteLabelValues(labels...)
 					if ok {
 						log.Debugf("No data observed for node with labels %v, removed from cpuprice", labels)
 					} else {
-						log.Warnf("Failed to remove label set %v from metric node_cpu_hourly_cost. Failure to remove stale metrics may result in inaccurate data.", labels)
+						log.Warnf("Failed to remove label set %v from metric oci_lens_cost_node_cpu_hourly_cost. Failure to remove stale metrics may result in inaccurate data.", labels)
 					}
 					ok = cmme.GPUPriceRecorder.DeleteLabelValues(labels...)
 					if ok {
 						log.Debugf("No data observed for node with labels %v, removed from gpuprice", labels)
 					} else {
-						log.Warnf("Failed to remove label set %v from metric node_gpu_hourly_cost. Failure to remove stale metrics may result in inaccurate data.", labels)
+						log.Warnf("Failed to remove label set %v from metric oci_lens_cost_node_gpu_hourly_cost. Failure to remove stale metrics may result in inaccurate data.", labels)
 					}
 					ok = cmme.GPUCountRecorder.DeleteLabelValues(labels...)
 					if ok {
 						log.Debugf("No data observed for node with labels %v, removed from gpucount", labels)
 					} else {
-						log.Warnf("Failed to remove label set %v from metric node_gpu_count. Failure to remove stale metrics may result in inaccurate data.", labels)
+						log.Warnf("Failed to remove label set %v from metric oci_lens_cost_node_gpu_count. Failure to remove stale metrics may result in inaccurate data.", labels)
 					}
 					ok = cmme.RAMPriceRecorder.DeleteLabelValues(labels...)
 					if ok {
 						log.Debugf("No data observed for node with labels %v, removed from ramprice", labels)
 					} else {
-						log.Warnf("Failed to remove label set %v from metric node_ram_hourly_cost. Failure to remove stale metrics may result in inaccurate data.", labels)
+						log.Warnf("Failed to remove label set %v from metric oci_lens_cost_node_ram_hourly_cost. Failure to remove stale metrics may result in inaccurate data.", labels)
 					}
 					delete(nodeSeen, labelString)
 					delete(nodeCostAverages, labelString)
@@ -783,7 +783,7 @@ func (cmme *CostModelMetricsEmitter) Start() bool {
 					labels := getLabelStringsFromKey(labelString)
 					ok := cmme.LBCostRecorder.DeleteLabelValues(labels...)
 					if !ok {
-						log.Warnf("Failed to remove label set %v from metric kubecost_load_balancer_cost. Failure to remove stale metrics may result in inaccurate data.", labels)
+						log.Warnf("Failed to remove label set %v from metric oci_lens_cost_kubecost_load_balancer_cost. Failure to remove stale metrics may result in inaccurate data.", labels)
 					}
 					delete(loadBalancerSeen, labelString)
 				} else {
@@ -796,15 +796,15 @@ func (cmme *CostModelMetricsEmitter) Start() bool {
 					if len(labels) >= 2 && labels[1] != unmountedPVsContainer { // special "pod" to contain the unmounted PVs - does not have RAM/CPU/...
 						ok := cmme.RAMAllocationRecorder.DeleteLabelValues(labels...)
 						if !ok {
-							log.Warnf("Failed to remove label set %v from metric container_memory_allocation_bytes. Failure to remove stale metrics may result in inaccurate data.", labels)
+							log.Warnf("Failed to remove label set %v from metric oci_lens_cost_container_memory_allocation_bytes. Failure to remove stale metrics may result in inaccurate data.", labels)
 						}
 						ok = cmme.CPUAllocationRecorder.DeleteLabelValues(labels...)
 						if !ok {
-							log.Warnf("Failed to remove label set %v from metric container_cpu_allocation. Failure to remove stale metrics may result in inaccurate data.", labels)
+							log.Warnf("Failed to remove label set %v from metric oci_lens_cost_container_cpu_allocation. Failure to remove stale metrics may result in inaccurate data.", labels)
 						}
 						ok = cmme.GPUAllocationRecorder.DeleteLabelValues(labels...)
 						if !ok {
-							log.Warnf("Failed to remove label set %v from metric container_gpu_allocation. Failure to remove stale metrics may result in inaccurate data.", labels)
+							log.Warnf("Failed to remove label set %v from metric oci_lens_cost_container_gpu_allocation. Failure to remove stale metrics may result in inaccurate data.", labels)
 						}
 					} else {
 						log.Debugf("Did not try to delete RAM/CPU/GPU for fake '%s' container: %v", unmountedPVsContainer, labels)
@@ -819,7 +819,7 @@ func (cmme *CostModelMetricsEmitter) Start() bool {
 					labels := getLabelStringsFromKey(labelString)
 					ok := cmme.PersistentVolumePriceRecorder.DeleteLabelValues(labels...)
 					if !ok {
-						log.Warnf("Failed to remove label set %v from metric pv_hourly_cost. Failure to remove stale metrics may result in inaccurate data.", labels)
+						log.Warnf("Failed to remove label set %v from metric oci_lens_cost_pv_hourly_cost. Failure to remove stale metrics may result in inaccurate data.", labels)
 					}
 					delete(pvSeen, labelString)
 				} else {
@@ -831,7 +831,7 @@ func (cmme *CostModelMetricsEmitter) Start() bool {
 					labels := getLabelStringsFromKey(labelString)
 					ok := cmme.PVAllocationRecorder.DeleteLabelValues(labels...)
 					if !ok {
-						log.Warnf("Failed to remove label set %v from metric pod_pvc_allocation. Failure to remove stale metrics may result in inaccurate data.", labels)
+						log.Warnf("Failed to remove label set %v from metric oci_lens_cost_pod_pvc_allocation. Failure to remove stale metrics may result in inaccurate data.", labels)
 					}
 					delete(pvcSeen, labelString)
 				} else {

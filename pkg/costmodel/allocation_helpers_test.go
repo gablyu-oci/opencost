@@ -472,7 +472,7 @@ func TestCalculateStartAndEnd(t *testing.T) {
 		expectedEnd   time.Time
 		result        *source.QueryResult
 	}{
-		// Example: avg(node_total_hourly_cost{}) by (node, provider_id)[1h:1h]
+		// Example: avg(oci_lens_cost_node_total_hourly_cost{}) by (node, provider_id)[1h:1h]
 		"1 hour resolution, 1 hour window": {
 			resolution:    time.Hour,
 			window:        opencost.NewClosedWindow(windowStart, windowStart.Add(time.Hour)),
@@ -489,7 +489,7 @@ func TestCalculateStartAndEnd(t *testing.T) {
 				},
 			},
 		},
-		// Example: avg(node_total_hourly_cost{}) by (node, provider_id)[1h:30m]
+		// Example: avg(oci_lens_cost_node_total_hourly_cost{}) by (node, provider_id)[1h:30m]
 		"30 minute resolution, 1 hour window": {
 			resolution:    time.Minute * 30,
 			window:        opencost.NewClosedWindow(windowStart, windowStart.Add(time.Hour)),
@@ -509,7 +509,7 @@ func TestCalculateStartAndEnd(t *testing.T) {
 				},
 			},
 		},
-		// Example: avg(node_total_hourly_cost{}) by (node, provider_id)[45m:15m]
+		// Example: avg(oci_lens_cost_node_total_hourly_cost{}) by (node, provider_id)[45m:15m]
 		"15 minute resolution, 45 minute window": {
 			resolution:    time.Minute * 15,
 			window:        opencost.NewClosedWindow(windowStart, windowStart.Add(time.Minute*45)),
@@ -560,7 +560,7 @@ func TestCalculateStartAndEnd(t *testing.T) {
 				},
 			},
 		},
-		// Example: avg(node_total_hourly_cost{}) by (node, provider_id)[1m:1m]
+		// Example: avg(oci_lens_cost_node_total_hourly_cost{}) by (node, provider_id)[1m:1m]
 		"1 minute resolution, 1 minute window": {
 			resolution:    time.Minute,
 			window:        opencost.NewClosedWindow(windowStart.Add(time.Minute*14).Add(time.Second*30), windowStart.Add(time.Minute*15).Add(time.Second*30)),
@@ -574,7 +574,7 @@ func TestCalculateStartAndEnd(t *testing.T) {
 				},
 			},
 		},
-		// Example: avg(node_total_hourly_cost{}) by (node, provider_id)[1m:1m]
+		// Example: avg(oci_lens_cost_node_total_hourly_cost{}) by (node, provider_id)[1m:1m]
 		"1 minute resolution, 1 minute window, at window start": {
 			resolution:    time.Minute,
 			window:        opencost.NewClosedWindow(windowStart, windowStart.Add(time.Second*30)),
