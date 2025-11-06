@@ -70,7 +70,7 @@ var diagnosticDefinitions map[string]*diagnosticDefinition = map[string]*diagnos
 	},
 	KubecostDiagnosticMetricID: {
 		ID:          KubecostDiagnosticMetricID,
-		QueryFmt:    `absent_over_time(node_cpu_hourly_cost{%s}[5m] %s)`,
+		QueryFmt:    `absent_over_time(oci_lens_cost_node_cpu_hourly_cost{%s}[5m] %s)`,
 		Label:       "Kubecost metrics available",
 		Description: "Determine if metrics from Kubecost are available during last 5 minutes.",
 	},

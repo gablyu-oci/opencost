@@ -25,70 +25,70 @@ kubecost_pod_network_ingress_bytes_total{pod_name="pod2",namespace="namespace1",
 `
 
 const opencostScrape = `
-# HELP kubecost_cluster_management_cost kubecost_cluster_management_cost Hourly cost paid as a cluster management fee.
-# TYPE kubecost_cluster_management_cost gauge
-kubecost_cluster_management_cost{provisioner_name="GKE"} 0.1
-# HELP kubecost_network_zone_egress_cost kubecost_network_zone_egress_cost Total cost per GB egress across zones
-# TYPE kubecost_network_zone_egress_cost gauge
-kubecost_network_zone_egress_cost 0.01
-# HELP kubecost_network_region_egress_cost kubecost_network_region_egress_cost Total cost per GB egress across regions
-# TYPE kubecost_network_region_egress_cost gauge
-kubecost_network_region_egress_cost 0.01
-# HELP kubecost_network_internet_egress_cost kubecost_network_internet_egress_cost Total cost per GB of internet egress.
-# TYPE kubecost_network_internet_egress_cost gauge
-kubecost_network_internet_egress_cost 0.12
-# HELP pv_hourly_cost pv_hourly_cost Cost per GB per hour on a persistent disk
-# TYPE pv_hourly_cost gauge
-pv_hourly_cost{persistentvolume="pvc-1",provider_id="pvc-1",volumename="pvc-1"} 5.479452054794521e-05
-pv_hourly_cost{persistentvolume="pvc-2",provider_id="pvc-2",volumename="pvc-2"} 5.479452054794521e-05
-# HELP kubecost_load_balancer_cost kubecost_load_balancer_cost Hourly cost of load balancer
-# TYPE kubecost_load_balancer_cost gauge
-kubecost_load_balancer_cost{ingress_ip="127.0.0.1",namespace="namespace1",service_name="service1"} 0.025
-# HELP container_cpu_allocation container_cpu_allocation Percent of a single CPU used in a minute
-# TYPE container_cpu_allocation gauge
-# HELP node_total_hourly_cost node_total_hourly_cost Total node cost per hour
-# TYPE node_total_hourly_cost gauge
-node_total_hourly_cost{arch="amd64",instance="node1",instance_type="e2-standard-2",node="node1",provider_id="node1",region="region1"} 0.06631302438846588
-node_total_hourly_cost{arch="amd64",instance="node2",instance_type="e2-standard-2",node="node2",provider_id="node2",region="region1"} 0.06631302438846588
-# HELP node_cpu_hourly_cost node_cpu_hourly_cost hourly cost for each cpu on this node
-# TYPE node_cpu_hourly_cost gauge
-node_cpu_hourly_cost{arch="amd64",instance="node1",instance_type="e2-standard-2",node="node1",provider_id="node1",region="region1"} 0.021811590000000002
-node_cpu_hourly_cost{arch="amd64",instance="node2",instance_type="e2-standard-2",node="node2",provider_id="node2",region="region1"} 0.021811590000000002
-# HELP node_ram_hourly_cost node_ram_hourly_cost hourly cost for each gb of ram on this node
-# TYPE node_ram_hourly_cost gauge
-node_ram_hourly_cost{arch="amd64",instance="node1",instance_type="e2-standard-2",node="node1",provider_id="node1",region="region1"} 0.00292353
-node_ram_hourly_cost{arch="amd64",instance="node2",instance_type="e2-standard-2",node="node2",provider_id="node2",region="region1"} 0.00292353
-# HELP node_gpu_hourly_cost node_gpu_hourly_cost hourly cost for each gpu on this node
-# TYPE node_gpu_hourly_cost gauge
-node_gpu_hourly_cost{arch="amd64",instance="node1",instance_type="e2-standard-2",node="node1",provider_id="node1",region="region1"} 0
-node_gpu_hourly_cost{arch="amd64",instance="node2",instance_type="e2-standard-2",node="node2",provider_id="node2",region="region1"} 0
-# HELP node_gpu_count node_gpu_count count of gpu on this node
-# TYPE node_gpu_count gauge
-node_gpu_count{arch="amd64",instance="node1",instance_type="e2-standard-2",node="node1",provider_id="node1",region="region1"} 0
-node_gpu_count{arch="amd64",instance="node2",instance_type="e2-standard-2",node="node2",provider_id="node2",region="region1"} 0
-# HELP kubecost_node_is_spot kubecost_node_is_spot Cloud provider info about node preemptibility
-# TYPE kubecost_node_is_spot gauge
-kubecost_node_is_spot{arch="amd64",instance="node1",instance_type="e2-standard-2",node="node1",provider_id="node1",region="region1"} 0
-kubecost_node_is_spot{arch="amd64",instance="node2",instance_type="e2-standard-2",node="node2",provider_id="node2",region="region1"} 0
+# HELP oci_lens_cost_kubecost_cluster_management_cost oci_lens_cost_kubecost_cluster_management_cost Hourly cost paid as a cluster management fee.
+# TYPE oci_lens_cost_kubecost_cluster_management_cost gauge
+oci_lens_cost_kubecost_cluster_management_cost{provisioner_name="GKE"} 0.1
+# HELP oci_lens_cost_kubecost_network_zone_egress_cost oci_lens_cost_kubecost_network_zone_egress_cost Total cost per GB egress across zones
+# TYPE oci_lens_cost_kubecost_network_zone_egress_cost gauge
+oci_lens_cost_kubecost_network_zone_egress_cost 0.01
+# HELP oci_lens_cost_kubecost_network_region_egress_cost oci_lens_cost_kubecost_network_region_egress_cost Total cost per GB egress across regions
+# TYPE oci_lens_cost_kubecost_network_region_egress_cost gauge
+oci_lens_cost_kubecost_network_region_egress_cost 0.01
+# HELP oci_lens_cost_kubecost_network_internet_egress_cost oci_lens_cost_kubecost_network_internet_egress_cost Total cost per GB of internet egress.
+# TYPE oci_lens_cost_kubecost_network_internet_egress_cost gauge
+oci_lens_cost_kubecost_network_internet_egress_cost 0.12
+# HELP oci_lens_cost_pv_hourly_cost oci_lens_cost_pv_hourly_cost Cost per GB per hour on a persistent disk
+# TYPE oci_lens_cost_pv_hourly_cost gauge
+oci_lens_cost_pv_hourly_cost{persistentvolume="pvc-1",provider_id="pvc-1",volumename="pvc-1"} 5.479452054794521e-05
+oci_lens_cost_pv_hourly_cost{persistentvolume="pvc-2",provider_id="pvc-2",volumename="pvc-2"} 5.479452054794521e-05
+# HELP oci_lens_cost_kubecost_load_balancer_cost oci_lens_cost_kubecost_load_balancer_cost Hourly cost of load balancer
+# TYPE oci_lens_cost_kubecost_load_balancer_cost gauge
+oci_lens_cost_kubecost_load_balancer_cost{ingress_ip="127.0.0.1",namespace="namespace1",service_name="service1"} 0.025
+# HELP oci_lens_cost_container_cpu_allocation oci_lens_cost_container_cpu_allocation Percent of a single CPU used in a minute
+# TYPE oci_lens_cost_container_cpu_allocation gauge
+# HELP oci_lens_cost_node_total_hourly_cost oci_lens_cost_node_total_hourly_cost Total node cost per hour
+# TYPE oci_lens_cost_node_total_hourly_cost gauge
+oci_lens_cost_node_total_hourly_cost{arch="amd64",instance="node1",instance_type="e2-standard-2",node="node1",provider_id="node1",region="region1"} 0.06631302438846588
+oci_lens_cost_node_total_hourly_cost{arch="amd64",instance="node2",instance_type="e2-standard-2",node="node2",provider_id="node2",region="region1"} 0.06631302438846588
+# HELP oci_lens_cost_node_cpu_hourly_cost oci_lens_cost_node_cpu_hourly_cost hourly cost for each cpu on this node
+# TYPE oci_lens_cost_node_cpu_hourly_cost gauge
+oci_lens_cost_node_cpu_hourly_cost{arch="amd64",instance="node1",instance_type="e2-standard-2",node="node1",provider_id="node1",region="region1"} 0.021811590000000002
+oci_lens_cost_node_cpu_hourly_cost{arch="amd64",instance="node2",instance_type="e2-standard-2",node="node2",provider_id="node2",region="region1"} 0.021811590000000002
+# HELP oci_lens_cost_node_ram_hourly_cost oci_lens_cost_node_ram_hourly_cost hourly cost for each gb of ram on this node
+# TYPE oci_lens_cost_node_ram_hourly_cost gauge
+oci_lens_cost_node_ram_hourly_cost{arch="amd64",instance="node1",instance_type="e2-standard-2",node="node1",provider_id="node1",region="region1"} 0.00292353
+oci_lens_cost_node_ram_hourly_cost{arch="amd64",instance="node2",instance_type="e2-standard-2",node="node2",provider_id="node2",region="region1"} 0.00292353
+# HELP oci_lens_cost_node_gpu_hourly_cost oci_lens_cost_node_gpu_hourly_cost hourly cost for each gpu on this node
+# TYPE oci_lens_cost_node_gpu_hourly_cost gauge
+oci_lens_cost_node_gpu_hourly_cost{arch="amd64",instance="node1",instance_type="e2-standard-2",node="node1",provider_id="node1",region="region1"} 0
+oci_lens_cost_node_gpu_hourly_cost{arch="amd64",instance="node2",instance_type="e2-standard-2",node="node2",provider_id="node2",region="region1"} 0
+# HELP oci_lens_cost_node_gpu_count oci_lens_cost_node_gpu_count count of gpu on this node
+# TYPE oci_lens_cost_node_gpu_count gauge
+oci_lens_cost_node_gpu_count{arch="amd64",instance="node1",instance_type="e2-standard-2",node="node1",provider_id="node1",region="region1"} 0
+oci_lens_cost_node_gpu_count{arch="amd64",instance="node2",instance_type="e2-standard-2",node="node2",provider_id="node2",region="region1"} 0
+# HELP oci_lens_cost_kubecost_node_is_spot oci_lens_cost_kubecost_node_is_spot Cloud provider info about node preemptibility
+# TYPE oci_lens_cost_kubecost_node_is_spot gauge
+oci_lens_cost_kubecost_node_is_spot{arch="amd64",instance="node1",instance_type="e2-standard-2",node="node1",provider_id="node1",region="region1"} 0
+oci_lens_cost_kubecost_node_is_spot{arch="amd64",instance="node2",instance_type="e2-standard-2",node="node2",provider_id="node2",region="region1"} 0
 # HELP ignore_fake_metric fake metric that the scrapper should ignore
 # TYPE ignore_fake_metric gauge
 ignore_fake_metric{container="container1",instance="node1",namespace="namespace1",node="node1",pod="pod1"} 0.02
-# HELP container_cpu_allocation container_cpu_allocation Percent of a single CPU used in a minute
-# TYPE container_cpu_allocation gauge
-container_cpu_allocation{container="container1",instance="node1",namespace="namespace1",node="node1",pod="pod1"} 0.02
-container_cpu_allocation{container="container2",instance="node2",namespace="namespace1",node="node2",pod="pod2"} 0.01
-# HELP container_memory_allocation_bytes container_memory_allocation_bytes Bytes of RAM used
-# TYPE container_memory_allocation_bytes gauge
-container_memory_allocation_bytes{container="container1",instance="node1",namespace="namespace1",node="node1",pod="pod1"} 1.1528192e+07
-container_memory_allocation_bytes{container="container2",instance="node2",namespace="namespace1",node="node2",pod="pod2"} 1e+07
-# HELP container_gpu_allocation container_gpu_allocation GPU used
-# TYPE container_gpu_allocation gauge
-container_gpu_allocation{container="container1",instance="node1",namespace="namespace1",node="node1",pod="pod1"} 0
-container_gpu_allocation{container="container2",instance="node2",namespace="namespace1",node="node2",pod="pod2"} 0
-# HELP pod_pvc_allocation pod_pvc_allocation Bytes used by a PVC attached to a pod
-# TYPE pod_pvc_allocation gauge
-pod_pvc_allocation{namespace="namespace1",persistentvolume="pvc-1",persistentvolumeclaim="pvc1",pod="pod1"} 3.4359738368e+10
-pod_pvc_allocation{namespace="namespace1",persistentvolume="pvc-2",persistentvolumeclaim="pvc2",pod="pod2"} 3.4359738368e+10
+# HELP oci_lens_cost_container_cpu_allocation oci_lens_cost_container_cpu_allocation Percent of a single CPU used in a minute
+# TYPE oci_lens_cost_container_cpu_allocation gauge
+oci_lens_cost_container_cpu_allocation{container="container1",instance="node1",namespace="namespace1",node="node1",pod="pod1"} 0.02
+oci_lens_cost_container_cpu_allocation{container="container2",instance="node2",namespace="namespace1",node="node2",pod="pod2"} 0.01
+# HELP oci_lens_cost_container_memory_allocation_bytes oci_lens_cost_container_memory_allocation_bytes Bytes of RAM used
+# TYPE oci_lens_cost_container_memory_allocation_bytes gauge
+oci_lens_cost_container_memory_allocation_bytes{container="container1",instance="node1",namespace="namespace1",node="node1",pod="pod1"} 1.1528192e+07
+oci_lens_cost_container_memory_allocation_bytes{container="container2",instance="node2",namespace="namespace1",node="node2",pod="pod2"} 1e+07
+# HELP oci_lens_cost_container_gpu_allocation oci_lens_cost_container_gpu_allocation GPU used
+# TYPE oci_lens_cost_container_gpu_allocation gauge
+oci_lens_cost_container_gpu_allocation{container="container1",instance="node1",namespace="namespace1",node="node1",pod="pod1"} 0
+oci_lens_cost_container_gpu_allocation{container="container2",instance="node2",namespace="namespace1",node="node2",pod="pod2"} 0
+# HELP oci_lens_cost_pod_pvc_allocation oci_lens_cost_pod_pvc_allocation Bytes used by a PVC attached to a pod
+# TYPE oci_lens_cost_pod_pvc_allocation gauge
+oci_lens_cost_pod_pvc_allocation{namespace="namespace1",persistentvolume="pvc-1",persistentvolumeclaim="pvc1",pod="pod1"} 3.4359738368e+10
+oci_lens_cost_pod_pvc_allocation{namespace="namespace1",persistentvolume="pvc-2",persistentvolumeclaim="pvc2",pod="pod2"} 3.4359738368e+10
 `
 
 const dcgmScrape = `

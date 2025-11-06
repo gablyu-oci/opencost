@@ -63,7 +63,7 @@ func newPrometheusClusterMap(contextFactory *ContextFactory, cip clusters.Cluste
 
 // clusterInfoQuery returns the query string to load cluster info
 func clusterInfoQuery(offset string) string {
-	return fmt.Sprintf("kubecost_cluster_info{%s}%s", env.GetPromClusterFilter(), offset)
+	return fmt.Sprintf("oci_lens_cost_kubecost_cluster_info{%s}%s", env.GetPromClusterFilter(), offset)
 }
 
 // loadClusters loads all the cluster info to map

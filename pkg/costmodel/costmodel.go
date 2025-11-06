@@ -359,6 +359,10 @@ func (cm *CostModel) ComputeCostData(start, end time.Time) (map[string]*CostData
 					gpuReqCount = g.AsApproximateFloat64()
 				} else if g, ok := container.Resources.Limits["nvidia.com/gpu"]; ok {
 					gpuReqCount = g.AsApproximateFloat64()
+				} else if g, ok := container.Resources.Requests["amd.com/gpu"]; ok {
+					gpuReqCount = g.AsApproximateFloat64()
+				} else if g, ok := container.Resources.Limits["amd.com/gpu"]; ok {
+					gpuReqCount = g.AsApproximateFloat64()
 				} else if g, ok := container.Resources.Requests["k8s.amazonaws.com/vgpu"]; ok {
 					gpuReqCount = g.AsApproximateFloat64()
 				} else if g, ok := container.Resources.Limits["k8s.amazonaws.com/vgpu"]; ok {

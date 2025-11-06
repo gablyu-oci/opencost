@@ -126,6 +126,13 @@ func (rcs *RateCardStore) ForKey(key models.Key, defaultPricing DefaultPricing) 
 	features := strings.Split(key.Features(), ",")
 	product := instanceProducts.get(features[0])
 	var node *models.Node
+	
+	// Extract GPU count from the key
+	gpuCount := 0
+	if oKey, ok := key.(*oracleKey); ok {
+		gpuCount = oKey.gpuCount
+	}
+	
 	// Use the default pricing if the instance product is unknown
 	if product.isEmpty() {
 		totalCost, err := defaultPricing.TotalInstanceCost()
@@ -146,7 +153,7 @@ func (rcs *RateCardStore) ForKey(key models.Key, defaultPricing DefaultPricing) 
 			Cost:     fmt.Sprintf("%f", totalCost),
 			VCPUCost: vcpuCost,
 			RAM:      defaultPricing.Memory,
-			GPU:      defaultPricing.GPU,
+			GPU:      fmt.Sprintf("%d", gpuCount),
 		}
 	} else {
 		ocpuPrice := rcs.prices[product.OCPU].UnitPrice
@@ -169,6 +176,7 @@ func (rcs *RateCardStore) ForKey(key models.Key, defaultPricing DefaultPricing) 
 			StorageCost: fmt.Sprintf("%f", diskPrice),
 			VCPUCost:    fmt.Sprintf("%f", ocpuPrice),
 			RAMCost:     fmt.Sprintf("%f", memoryPrice),
+			GPU:         fmt.Sprintf("%d", gpuCount),
 			GPUCost:     fmt.Sprintf("%f", gpuPrice),
 		}
 	}

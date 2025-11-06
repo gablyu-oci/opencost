@@ -108,7 +108,7 @@ func NewOpenCostMetricStore() metric.MetricStore {
 
 //	avg(
 //		avg_over_time(
-//			pv_hourly_cost{
+//			oci_lens_cost_pv_hourly_cost{
 //				<some_custom_filter>
 //			}[1h]
 //		)
@@ -324,7 +324,7 @@ func NewLocalStorageBytesMetricCollector() *metric.MetricCollector {
 
 // count(
 //
-//	node_total_hourly_cost{
+//	oci_lens_cost_node_total_hourly_cost{
 //		<some_custom_filter>
 //	}
 //
@@ -430,7 +430,7 @@ func NewNodeRAMBytesAllocatableMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			node_gpu_count{
+//			oci_lens_cost_node_gpu_count{
 //				<some_custom_filter>
 //			}[1h]
 //		)
@@ -470,7 +470,7 @@ func NewNodeLabelsMetricCollector() *metric.MetricCollector {
 }
 
 //	avg(
-//		node_total_hourly_cost{
+//		oci_lens_cost_node_total_hourly_cost{
 //			<some_custom_filter>
 //		}
 //	) by (node, cluster_id, provider_id)[%s:%dm]
@@ -565,7 +565,7 @@ func NewNodeRAMUserUsageAverageMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			kubecost_load_balancer_cost{
+//			oci_lens_cost_kubecost_load_balancer_cost{
 //				<some_custom_filter>
 //			}[1h]
 //		)
@@ -587,7 +587,7 @@ func NewLBPricePerHourMetricCollector() *metric.MetricCollector {
 }
 
 //	avg(
-//		kubecost_load_balancer_cost{
+//		oci_lens_cost_kubecost_load_balancer_cost{
 //			<some_custom_filter>
 //		}
 //	) by (namespace, service_name, cluster_id, ingress_ip)[%s:%dm]
@@ -608,7 +608,7 @@ func NewLBActiveMinutesMetricCollector() *metric.MetricCollector {
 }
 
 //	avg(
-//		kubecost_cluster_management_cost{
+//		oci_lens_cost_kubecost_cluster_management_cost{
 //			<some_custom_filter>
 //		}
 //	) by (cluster_id, provisioner_name)[%s:%dm]
@@ -628,7 +628,7 @@ func NewClusterManagementDurationMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			kubecost_cluster_management_cost{
+//			oci_lens_cost_kubecost_cluster_management_cost{
 //				<some_custom_filter>
 //			}[1h]
 //		)
@@ -669,7 +669,7 @@ func NewPodActiveMinutesMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			container_memory_allocation_bytes{
+//			oci_lens_cost_container_memory_allocation_bytes{
 //				container!="",
 //				container!="POD",
 //				node!="",
@@ -821,7 +821,7 @@ func NewRAMUsageMaxMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			container_cpu_allocation{
+//			oci_lens_cost_container_cpu_allocation{
 //				container!="",
 //				container!="POD",
 //				node!="",
@@ -998,7 +998,8 @@ func NewGPUsRequestedMetricCollector() *metric.MetricCollector {
 		},
 		aggregator.AverageOverTime,
 		func(labels map[string]string) bool {
-			return labels[source.ResourceLabel] == "nvidia_com_gpu" && labels[source.ContainerLabel] != "POD" && labels[source.ContainerLabel] != "" && labels[source.NodeLabel] != ""
+			resource := labels[source.ResourceLabel]
+			return (resource == "nvidia_com_gpu" || resource == "amd_com_gpu") && labels[source.ContainerLabel] != "POD" && labels[source.ContainerLabel] != "" && labels[source.NodeLabel] != ""
 		},
 	)
 }
@@ -1055,7 +1056,7 @@ func NewGPUsUsageMaxMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			container_gpu_allocation{
+//			oci_lens_cost_container_gpu_allocation{
 //				container!="",
 //				container!="POD",
 //				node!="",
@@ -1143,7 +1144,7 @@ func NewGPUInfoMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			node_cpu_hourly_cost{
+//			oci_lens_cost_node_cpu_hourly_cost{
 //				<some_custom_filter>
 //			}[1h]
 //		)
@@ -1166,7 +1167,7 @@ func NewNodeCPUPricePerHourMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			node_ram_hourly_cost{
+//			oci_lens_cost_node_ram_hourly_cost{
 //				<some_custom_filter>
 //			}[1h]
 //		)
@@ -1189,7 +1190,7 @@ func NewNodeRAMPricePerGiBHourMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			node_gpu_hourly_cost{
+//			oci_lens_cost_node_gpu_hourly_cost{
 //				<some_custom_filter>
 //			}[1h]
 //		)
@@ -1211,7 +1212,7 @@ func NewNodeGPUPricePerHourMetricCollector() *metric.MetricCollector {
 }
 
 //	avg_over_time(
-//		kubecost_node_is_spot{
+//		oci_lens_cost_kubecost_node_is_spot{
 //			<some_custom_filter>
 //		}[1h]
 //	)
@@ -1232,7 +1233,7 @@ func NewNodeIsSpotMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			pod_pvc_allocation{
+//			oci_lens_cost_pod_pvc_allocation{
 //				<some_custom_filter>
 //			}[1h]
 //		)
@@ -1350,7 +1351,7 @@ func NewNetZoneGiBMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			kubecost_network_zone_egress_cost{
+//			oci_lens_cost_kubecost_network_zone_egress_cost{
 //				<some_custom_filter>
 //			}[1h]
 //		)
@@ -1396,7 +1397,7 @@ func NewNetRegionGiBMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			kubecost_network_region_egress_cost{
+//			oci_lens_cost_kubecost_network_region_egress_cost{
 //				<some_custom_filter>
 //			}[1h]
 //		)
@@ -1439,7 +1440,7 @@ func NewNetInternetGiBMetricCollector() *metric.MetricCollector {
 
 //	avg(
 //		avg_over_time(
-//			kubecost_network_internet_egress_cost{
+//			oci_lens_cost_kubecost_network_internet_egress_cost{
 //				<some_custom_filter>
 //			}[1h]
 //		)
